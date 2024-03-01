@@ -23,7 +23,13 @@ def roll_dice(num_rolls, dice=six_sided):
     # BEGIN PROBLEM 1
     "*** YOUR CODE HERE ***"
     # END PROBLEM 1
-
+    scorelist = [ dice() for i in range(num_rolls)]
+    if 1 in scorelist:
+        return 1
+    else:
+        return sum(scorelist)
+           
+       
 
 def boar_brawl(player_score, opponent_score):
     """Return the points scored by rolling 0 dice according to Boar Brawl.
@@ -35,7 +41,9 @@ def boar_brawl(player_score, opponent_score):
     # BEGIN PROBLEM 2
     "*** YOUR CODE HERE ***"
     # END PROBLEM 2
-
+    gain_points = 3 * abs((opponent_score//10) - (player_score%10))
+    player_score += gain_points
+    return  player_score,opponent_score
 
 def take_turn(num_rolls, player_score, opponent_score, dice=six_sided):
     """Return the points scored on a turn rolling NUM_ROLLS dice when the
@@ -53,6 +61,11 @@ def take_turn(num_rolls, player_score, opponent_score, dice=six_sided):
     # BEGIN PROBLEM 3
     "*** YOUR CODE HERE ***"
     # END PROBLEM 3
+    if num_rolls != 0:
+        player_score += roll_dice(num_rolls,dice=six_sided)
+    else:
+        boar_brawl(player_score,opponent_score)
+    return player_score,opponent_score
 
 
 def simple_update(num_rolls, player_score, opponent_score, dice=six_sided):
@@ -78,12 +91,26 @@ def num_factors(n):
     # BEGIN PROBLEM 4
     "*** YOUR CODE HERE ***"
     # END PROBLEM 4
+    k = 0
+    for i in range(1,n+1):
+        if n % i == 0:
+            k += 1
+    return k
 
 def sus_points(score):
     """Return the new score of a player taking into account the Sus Fuss rule."""
     # BEGIN PROBLEM 4
     "*** YOUR CODE HERE ***"
     # END PROBLEM 4
+    if num_factors(score) == 3 or num_factors(score) == 4:
+        while score < 100:
+            if not is_prime(score):
+                score += 1
+            else:
+                return score
+                break
+    else:
+        return score
 
 def sus_update(num_rolls, player_score, opponent_score, dice=six_sided):
     """Return the total score of a player who starts their turn with
@@ -92,7 +119,8 @@ def sus_update(num_rolls, player_score, opponent_score, dice=six_sided):
     # BEGIN PROBLEM 4
     "*** YOUR CODE HERE ***"
     # END PROBLEM 4
-
+    score = sus_update(score) + simple_update(num_rolls, player_score, opponent_score, dice=six_sided)
+    return score
 
 def always_roll_5(score, opponent_score):
     """A strategy of always rolling 5 dice, regardless of the player's score or
