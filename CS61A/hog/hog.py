@@ -62,10 +62,10 @@ def take_turn(num_rolls, player_score, opponent_score, dice=six_sided):
     "*** YOUR CODE HERE ***"
     # END PROBLEM 3
     if num_rolls != 0:
-        player_score += roll_dice(num_rolls,dice=six_sided)
+        player_score = roll_dice(num_rolls,dice=six_sided)
     else:
         boar_brawl(player_score,opponent_score)
-    return player_score,opponent_score
+    return player_score
 
 
 def simple_update(num_rolls, player_score, opponent_score, dice=six_sided):
@@ -119,7 +119,7 @@ def sus_update(num_rolls, player_score, opponent_score, dice=six_sided):
     # BEGIN PROBLEM 4
     "*** YOUR CODE HERE ***"
     # END PROBLEM 4
-    score = sus_update(score) + simple_update(num_rolls, player_score, opponent_score, dice=six_sided)
+    score = sus_points(score) + simple_update(num_rolls, player_score, opponent_score, dice=six_sided)
     return score
 
 def always_roll_5(score, opponent_score):
@@ -159,6 +159,14 @@ def play(strategy0, strategy1, update,
     # BEGIN PROBLEM 5
     "*** YOUR CODE HERE ***"
     # END PROBLEM 5
+    while score0 < goal and score1 < goal:
+        if who == 0:
+            score0 = update(strategy0(score0,score1),score0,score1,dice=six_sided)
+        else:
+            score1 = update(strategy1(score1,score0),score1,score0,dice=six_sided)
+        who = 1 - who
+
+
     return score0, score1
 
 
