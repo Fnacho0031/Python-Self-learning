@@ -119,7 +119,7 @@ def sus_update(num_rolls, player_score, opponent_score, dice=six_sided):
     # BEGIN PROBLEM 4
     "*** YOUR CODE HERE ***"
     # END PROBLEM 4
-    score = sus_points(score) + simple_update(num_rolls, player_score, opponent_score, dice=six_sided)
+    score = sus_points(player_score) + simple_update(num_rolls, player_score, opponent_score, dice=six_sided)
     return score
 
 def always_roll_5(score, opponent_score):
@@ -146,6 +146,7 @@ def play(strategy0, strategy1, update,
     of dice to roll, the current player's score, the opponent's score, and the
     dice function used to simulate rolling dice. It returns the updated score
     of the current player after they take their turn.
+
 
     strategy0: The strategy for player0.
     strategy1: The strategy for player1.
@@ -192,6 +193,10 @@ def always_roll(n):
     # BEGIN PROBLEM 6
     "*** YOUR CODE HERE ***"
     # END PROBLEM 6
+    def always_roll_n(score, opponent_score):
+        return n
+    return always_roll_n
+         
 
 
 def catch_up(score, opponent_score):
@@ -223,7 +228,18 @@ def is_always_roll(strategy, goal=GOAL):
     # BEGIN PROBLEM 7
     "*** YOUR CODE HERE ***"
     # END PROBLEM 7
-
+    for i in range(goal):
+        for j in range(goal):
+            if strategy(i,j) == strategy(j,i):
+                the_same = True
+            else:
+                the_same = False
+                break
+        if the_same == False:
+            break
+    return the_same
+        
+                
 
 def make_averaged(original_function, samples_count=1000):
     """Return a function that returns the average value of ORIGINAL_FUNCTION
@@ -239,6 +255,14 @@ def make_averaged(original_function, samples_count=1000):
     # BEGIN PROBLEM 8
     "*** YOUR CODE HERE ***"
     # END PROBLEM 8
+    def function_averaged(*args):
+        results_total = 0
+        for i in range (samples_count):
+            results_total += original_function(*args)
+        results_average = results_total/samples_count
+        return results_average
+    return function_averaged
+          
 
 
 def max_scoring_num_rolls(dice=six_sided, samples_count=1000):
@@ -253,7 +277,18 @@ def max_scoring_num_rolls(dice=six_sided, samples_count=1000):
     # BEGIN PROBLEM 9
     "*** YOUR CODE HERE ***"
     # END PROBLEM 9
+    averaged_dice = make_averaged(roll_dice, samples_count)
+    max_score = max_rolls = 0
+    for i in range(1,11):
+        expect_scoring = averaged_dice(i,dice)
+        if expect_scoring > max_score:
+            max_score = expect_scoring
+            max_rolls = i
+        elif expect_scoring == max_score and max_rolls < i:
+            pass
+    return max_rolls
 
+        
 
 def winner(strategy0, strategy1):
     """Return 0 if strategy0 wins against strategy1, and 1 otherwise."""
