@@ -274,18 +274,18 @@ def max_scoring_num_rolls(dice=six_sided, samples_count=1000):
     # BEGIN PROBLEM 9
     "*** YOUR CODE HERE ***"
     # END PROBLEM 9
+    
     averaged_dice = make_averaged(roll_dice, samples_count)
-    max_score = max_rolls = 0
-    for i in range(1,11):
-        expect_scoring = averaged_dice(i,dice)
-        if expect_scoring > max_score:
-            max_score = expect_scoring
-            max_rolls = i
-        elif expect_scoring == max_score:
-            if max_rolls > i:
-                max_rolls = i
-
+    score_list = ((rolls,averaged_dice(rolls,dice)) for rolls in range(1,11))
+    max_rolls, max_score = max(score_list, key = lambda x : (x[1],-x[0]))
     return max_rolls
+
+    '''
+    avg_scores = [averaged_dice(i, dice) for i in range(1, 11)]
+    max_score = max(avg_scores)
+    max_rolls = avg_scores.index(max_score) + 1 
+    # 这个max_rolls 也是很巧妙的方法啊,本身自带顺序,所以自动筛选出最小的max_rolls了
+    '''
 
         
 
@@ -344,7 +344,7 @@ def sus_strategy(score, opponent_score, threshold=11, num_rolls=6):
     # BEGIN PROBLEM 11
     #return num_rolls  # Remove this line once implemented.
     # END PROBLEM 11
-    add_score = sus_update(num_rolls, score, opponent_score) - score
+    add_score = sus_update(0, score, opponent_score) - score
     if add_score >= threshold:
         return 0
     else:
@@ -354,12 +354,27 @@ def sus_strategy(score, opponent_score, threshold=11, num_rolls=6):
 
 def final_strategy(score, opponent_score):
     """Write a brief description of your final strategy.
-
+    If you know the goal score (by default it is 100), there's no benefit to scoring more than the goal.
+    Check whether you can win by rolling 0, 1 or 2 dice. If you are in the lead, you might decide to take fewer risks.
+    Instead of using a threshold, roll 0 whenever it would give you more points on average than rolling 6.
     *** YOUR DESCRIPTION HERE ***
     """
     # BEGIN PROBLEM 12
-    return 6  # Remove this line once implemented.
+    #return 6  # Remove this line once implemented.
     # END PROBLEM 12
+    average_six = make_averaged(sus_update,samples_count=10)
+    add_score = sus_update(0,score,opponent_score) - average_six(6, score, opponent_score)
+    if add_score > 0:
+        return 0
+    elif sus_update(1,score,opponent_score) >= GOAL:
+        return 1 
+    elif sus_update(2,score,opponent_score) >= GOAL:
+        return 2
+    else:
+        return 6
+    # 0.6955
+   
+     
 
 
 
